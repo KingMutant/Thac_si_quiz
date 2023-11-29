@@ -1,0 +1,9 @@
+﻿  LeMinhDuy.cpp
+C:\Users\Asus Vivobook\Desktop\D\C++_project\Ky_thuat_lap_trinh\HW2\HW2\LeMinhDuy.cpp(26,40): warning C4244: '=': conversion from 'double' to 'unsigned long', possible loss of data
+C:\Users\Asus Vivobook\Desktop\D\C++_project\Ky_thuat_lap_trinh\HW2\HW2\LeMinhDuy.cpp(29,60): warning C4244: '=': conversion from 'double' to 'unsigned long', possible loss of data
+C:\Users\Asus Vivobook\Desktop\D\C++_project\Ky_thuat_lap_trinh\HW2\HW2\LeMinhDuy.cpp(32,107): warning C4244: '=': conversion from 'double' to 'unsigned long', possible loss of data
+C:\Users\Asus Vivobook\Desktop\D\C++_project\Ky_thuat_lap_trinh\HW2\HW2\LeMinhDuy.cpp(35,154): warning C4244: '=': conversion from 'double' to 'unsigned long', possible loss of data
+C:\Users\Asus Vivobook\Desktop\D\C++_project\Ky_thuat_lap_trinh\HW2\HW2\LeMinhDuy.cpp(38,201): warning C4244: '=': conversion from 'double' to 'unsigned long', possible loss of data
+C:\Users\Asus Vivobook\Desktop\D\C++_project\Ky_thuat_lap_trinh\HW2\HW2\LeMinhDuy.cpp(41,248): warning C4244: '=': conversion from 'double' to 'unsigned long', possible loss of data
+C:\Users\Asus Vivobook\Desktop\D\C++_project\Ky_thuat_lap_trinh\HW2\HW2\LeMinhDuy.cpp(44,295): warning C4244: '=': conversion from 'double' to 'unsigned long', possible loss of data
+  HW2.vcxproj -> C:\Users\Asus Vivobook\Desktop\D\C++_project\Ky_thuat_lap_trinh\HW2\x64\Debug\HW2.exe
