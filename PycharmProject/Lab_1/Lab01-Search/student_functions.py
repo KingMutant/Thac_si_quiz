@@ -28,22 +28,14 @@ def BFS(matrix, start, end):
     visited = {}
     queue = deque([start])
     path = []
-
+    visited[start] = start
     while queue:
         current_node = queue.popleft()
-        print(f"Processing node: {current_node}")
-        print("Queue:", list(queue))
-        print("Visited nodes:", visited)
-        print("Current path:", path)
-
-        visited[current_node] = True
-
         if current_node == end:
             path = [end]
             while start not in path:
                 path.append(visited[path[-1]])
             path.reverse()
-            print("Path found:", path)
             break
 
         neighbors = [i for i, weight in enumerate(matrix[current_node]) if weight != 0 and i not in visited]
@@ -75,25 +67,20 @@ def DFS(matrix, start, end):
     """
 
     # TODO: 
-
-    path = []
     visited = {}
-
+    path = []
+    visited[start] = start
     def recursive_dfs(node):
         nonlocal visited, path
 
-        print(f"Processing node: {node}")
-        print("Visited nodes:", visited)
-        print("Current path:", path)
 
-        visited[node] = True
+        # visited[node] = True
 
         if node == end:
             path = [end]
             while start not in path:
                 path.append(visited[path[-1]])
             path.reverse()
-            print("Path found:", path)
             return True
 
         neighbors = [i for i, weight in enumerate(matrix[node]) if weight != 0 and i not in visited]
@@ -132,33 +119,30 @@ def UCS(matrix, start, end):
 
     path = []
     visited = {}
-    priority_queue = [(0, start)]  # Priority queue using heapq
+    priority_queue = [(0, start, start)]  # Priority queue using heapq
 
     while priority_queue:
-        heapq._heapify_max(priority_queue)
-        priority_queue.reverse()
-        print("Priority Queue:", priority_queue)
-        cost, current_node = heapq.heappop(priority_queue)
+        sorted_priority_queue = sorted(priority_queue, key=lambda x: x[0])
+
+        print("Sorted Priority Queue:", sorted_priority_queue)
+        cost, current_node, previous = heapq.heappop(priority_queue)
 
         if current_node in visited:
             continue
 
-        visited[current_node] = True
+        visited[current_node] = previous
 
         if current_node == end:
             path = [end]
             while start not in path:
                 path.append(visited[path[-1]])
             path.reverse()
-            print("Path found:", path)
             break
 
         for next_node, weight in enumerate(matrix[current_node]):
             if weight != 0:
-                heapq.heappush(priority_queue, (cost + weight, next_node))
+                heapq.heappush(priority_queue, (cost + weight, next_node, current_node))
 
-    print("Visited:", visited)
-    print("Path found:", path)
     return visited, path
 
 
@@ -192,24 +176,26 @@ def IDS(matrix, start, goal):
 
 
 def depth_limited_DFS(matrix, start, goal, depth_limit):
-    """
-    Depth-Limited DFS for IDS
-    """
     path = []
     visited = {}
     stack = [(start, 0)]  # Using a stack to implement DFS with depth limit
-
+    previous_node = start
     while stack:
-        current_node, depth = stack.pop()
 
+        current_node, depth = stack.pop()
         if current_node in visited and visited[current_node] <= depth:
             continue
 
-        visited[current_node] = depth
+        visited[current_node] = previous_node
+        previous_node = current_node
         path.append(current_node)
 
         if current_node == goal:
-            return visited, path
+            path = [goal]
+            while start not in path:
+                path.append(visited[path[-1]])
+            path.reverse()
+            break
 
         if depth < depth_limit:
             neighbors = [i for i, value in enumerate(matrix[current_node]) if value != 0]
@@ -231,18 +217,41 @@ def GBFS(matrix, start, end):
         starting node
     end: integer
         ending node
-   
+
     Returns
     ---------------------
     visited
-        The dictionary contains visited nodes: each key is a visited node, 
+        The dictionary contains visited nodes: each key is a visited node,
         each value is the key's adjacent node which is visited before key.
     path: list
         Founded path
     """
-    # TODO: 
     path = []
     visited = {}
+    priority_queue = [(0, start, start)]
+
+    while priority_queue:
+        sorted_priority_queue = sorted(priority_queue, key=lambda x: x[0])
+
+        print("Sorted Priority Queue:", sorted_priority_queue)
+        cost, current_node, previous = heapq.heappop(priority_queue)
+
+        if current_node in visited:
+            continue
+
+        visited[current_node] = previous
+
+        if current_node == end:
+            path = [end]
+            while start not in path:
+                path.append(visited[path[-1]])
+            path.reverse()
+            break
+
+        for next_node, weight in enumerate(matrix[current_node]):
+            if weight != 0:
+                heapq.heappush(priority_queue, (weight, next_node, current_node))
+
     return visited, path
 
 
@@ -272,4 +281,53 @@ def Astar(matrix, start, end, pos):
 
     path = []
     visited = {}
+    priority_queue = [(0, start, start)]  # Priority queue using heapq
+
+    while priority_queue:
+        sorted_priority_queue = sorted(priority_queue, key=lambda x: x[0])
+
+        print("Sorted Priority Queue:", sorted_priority_queue)
+        cost, current_node, previous = heapq.heappop(priority_queue)
+
+        if current_node in visited:
+            continue
+
+        visited[current_node] = previous
+
+        if current_node == end:
+            path = [end]
+            while start not in path:
+                path.append(visited[path[-1]])
+            path.reverse()
+            break
+
+        for next_node, weight in enumerate(matrix[current_node]):
+            if weight != 0:
+                heapq.heappush(priority_queue, (cost + weight, next_node, current_node))
+
     return visited, path
+
+
+def generate_heuristic(current_node, goal_node):
+    pos = {
+        0: (0, 0),
+        1: (1, 1),
+        2: (2, 2),
+        3: (3, 3),
+        4: (4, 4),
+        5: (5, 5),
+        6: (6, 6),
+        7: (7, 7)
+    }
+
+    h = {}
+    current_position = pos[current_node]
+    goal_position = pos[goal_node]
+
+    for node, position in pos.items():
+        x1, y1 = position
+        x2, y2 = goal_position
+        euclidean_distance = np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+        h[node] = euclidean_distance
+
+    return h
