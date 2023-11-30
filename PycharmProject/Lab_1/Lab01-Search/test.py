@@ -1,32 +1,24 @@
 import numpy as np
 
-
-def generate_heuristic(pos, goal_node):
+def generate_heuristic(start, goal, pos):
     """
-    Generate heuristic function h based on Euclidean distance.
+    Generate heuristic values for each node based on Euclidean distance to the goal node.
     Parameters:
     ---------------------------
-    pos: dict
-        Dictionary containing node positions. Keys are node indices, and values are positions.
-    goal_node: int
-        The goal node index.
-
-    Returns:
+    start: integer
+        starting node
+    goal: integer
+        goal node
+    pos: dictionary
+        positions of graph nodes
+    Returns
     ---------------------
-    h: dict
-        Dictionary containing heuristic values for each node.
+    heuristic_values: float
+        heuristic value for the given start and goal nodes
     """
-    h = {}
-    goal_position = pos[goal_node]
-
-    for node, position in pos.items():
-        x1, y1 = position
-        x2, y2 = goal_position
-        euclidean_distance = np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
-        h[node] = euclidean_distance
-
-    return h
-
+    # Calculate Euclidean distance between node and goal
+    distance = np.sqrt((pos[start][0] - pos[goal][0])**2 + (pos[start][1] - pos[goal][1])**2)
+    return distance
 
 # Example usage:
 pos = {
@@ -40,7 +32,8 @@ pos = {
     7: (7, 7)
 }
 
+start_node = 4
 goal_node = 6
 
-heuristic_values = generate_heuristic(pos, goal_node)
-print("Heuristic Values:", heuristic_values)
+heuristic_value = generate_heuristic(start_node, goal_node, pos)
+print("Heuristic Value:", heuristic_value)
