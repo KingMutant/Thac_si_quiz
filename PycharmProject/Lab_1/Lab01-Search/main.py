@@ -14,4 +14,4 @@ if __name__ == '__main__':
     #     time_delay = int(sys.argv[4])
     # else: time_delay=500
     # run(input, al, time_delay)
-    run("input.txt", 'greedy', 500)
+    run("input.txt", 'astar', 500)
