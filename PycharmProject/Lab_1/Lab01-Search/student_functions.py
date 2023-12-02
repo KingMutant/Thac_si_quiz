@@ -74,8 +74,6 @@ def DFS(matrix, start, end):
         nonlocal visited, path
 
 
-        # visited[node] = True
-
         if node == end:
             path = [end]
             while start not in path:
@@ -169,51 +167,45 @@ def IDS(matrix, start, goal):
     depth_limit = 0
 
     while True:
-        visited, path = depth_limited_DFS(matrix, start, goal, depth_limit)
-        if goal in visited:
+        visited = {}
+        path = dfs(matrix, start, goal, visited, depth_limit)
+
+        if path:
             return visited, path
+
         depth_limit += 1
 
 
-def depth_limited_DFS(matrix, start, goal, depth_limit):
-    path = []
-    visited = {}
-    stack = [(start, 0)]  # Using a stack to implement DFS with depth limit
-    previous_node = start
-    while stack:
+def dfs(matrix, current, goal, visited, depth_limit):
+    """
+    Depth-First Search (DFS) with depth limit
+    """
+    if depth_limit < 0:
+        return None
 
-        current_node, depth = stack.pop()
-        if current_node in visited and visited[current_node] <= depth:
-            continue
+    if current == goal:
+        return [goal]
 
-        visited[current_node] = previous_node
-        previous_node = current_node
-        path.append(current_node)
+    visited[current] = None
 
-        if current_node == goal:
-            path = [goal]
-            while start not in path:
-                path.append(visited[path[-1]])
-            path.reverse()
-            break
+    for next_node, weight in enumerate(matrix[current]):
+        if weight != 0 and next_node not in visited:
+            path = dfs(matrix, next_node, goal, visited, depth_limit - 1)
+            if path is not None:
+                visited[current] = next_node
+                return [current] + path
 
-        if depth < depth_limit:
-            neighbors = [i for i, value in enumerate(matrix[current_node]) if value != 0]
-            for neighbor in neighbors:
-                stack.append((neighbor, depth + 1))
-
-    return visited, path
-
+    return None
 
 def GBFS(matrix, start, end):
     """
-    Greedy Best First Search algorithm 
-    heuristic : edge weights
-     Parameters:
+    Greedy Best First Search algorithm
+    heuristic: edge weights
+    Parameters:
     ---------------------------
-    matrix: np array 
+    matrix: np array
         The graph's adjacency matrix
-    start: integer 
+    start: integer
         starting node
     end: integer
         ending node
@@ -228,13 +220,13 @@ def GBFS(matrix, start, end):
     """
     path = []
     visited = {}
-    priority_queue = [(0, start, start)]
+    priority_queue = [(heuristic_greedy(matrix, start, end), start, start)]  # Priority queue using heapq
 
     while priority_queue:
         sorted_priority_queue = sorted(priority_queue, key=lambda x: x[0])
-
-        print("Sorted Priority Queue:", sorted_priority_queue)
-        cost, current_node, previous = heapq.heappop(priority_queue)
+        print("priority_queue ", sorted_priority_queue)
+        _, current_node, previous = heapq.heappop(sorted_priority_queue)
+        print("priority_queue ", sorted_priority_queue)
 
         if current_node in visited:
             continue
@@ -249,23 +241,14 @@ def GBFS(matrix, start, end):
             break
 
         for next_node, weight in enumerate(matrix[current_node]):
-            if weight != 0:
-                heapq.heappush(priority_queue, (weight, next_node, current_node))
+            if weight != 0 and next_node not in visited:
+                heapq.heappush(priority_queue, (heuristic_greedy(matrix, next_node, end), next_node, current_node))
 
     return visited, path
 
-pos = {
-    0: (0, 0),
-    1: (1, 1),
-    2: (2, 2),
-    3: (3, 3),
-    4: (4, 4),
-    5: (5, 5),
-    6: (6, 6),
-    7: (7, 7)
-}
 
-
+def heuristic_greedy(matrix, node, goal):
+    return matrix[node][goal]
 
 
 def Astar(matrix, start, end, pos):
@@ -292,10 +275,9 @@ def Astar(matrix, start, end, pos):
     """
     # TODO: 
 
-    def generate_heuristic(current_vertex, goal, position):
+    def heuristic_astar(current_vertex, goal, position):
         distance = np.sqrt((position[current_vertex][0] - position[goal][0]) ** 2 + (position[current_vertex][1] - position[goal][1]) ** 2)
         return distance
-
 
     priority_queue = [(0, start, start)]
     g_values = {node: float('inf') for node in range(len(matrix))}
@@ -304,10 +286,8 @@ def Astar(matrix, start, end, pos):
     visited = {}
     path = []
 
-
     while priority_queue:
-        sorted_priority_queue = sorted(priority_queue, key=lambda x: x[0])
-        print("Sorted Priority Queue:", sorted_priority_queue)
+        priority_queue = sorted(priority_queue, key=lambda x: x[0])
         _, current_node, previous = heapq.heappop(priority_queue)
         if current_node in visited:
             continue
@@ -324,7 +304,7 @@ def Astar(matrix, start, end, pos):
         for next_node, weight in enumerate(matrix[current_node]):
             if weight != 0:
                 g = g_values[current_node] + weight
-                h = generate_heuristic(next_node, end, pos)
+                h = heuristic_astar(next_node, end, pos)
                 f = g + h
 
                 if g < g_values[next_node]:
