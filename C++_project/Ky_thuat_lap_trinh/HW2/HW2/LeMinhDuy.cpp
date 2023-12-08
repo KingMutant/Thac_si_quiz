@@ -1,65 +1,58 @@
 #include <iostream>
 
-const unsigned long BASE_INCOME_1 = 4000000;
-const unsigned long BASE_INCOME_2 = 6000000;
-const unsigned long BASE_INCOME_3 = 9000000;
-const unsigned long BASE_INCOME_4 = 14000000;
-const unsigned long BASE_INCOME_5 = 24000000;
-const unsigned long BASE_INCOME_6 = 44000000;
-const unsigned long BASE_INCOME_7 = 84000000;
+void inputArray(int*& arr, int& size) {
+    std::cout << "Enter the size of the array: ";
+    std::cin >> size;
 
-const double TAX_RATE_1 = 0.05;
-const double TAX_RATE_2 = 0.1;
-const double TAX_RATE_3 = 0.15;
-const double TAX_RATE_4 = 0.2;
-const double TAX_RATE_5 = 0.25;
-const double TAX_RATE_6 = 0.3;
-const double TAX_RATE_7 = 0.35;
+    arr = new int[size];
 
-unsigned long calculateTax(unsigned long income) {
-    unsigned long tax = 0;
+    std::cout << "Enter " << size << " integers for the array:" << std::endl;
+    for (int i = 0; i < size; ++i) {
+        std::cout << "Number " << i + 1 << ": ";
+        std::cin >> arr[i];
+    }
+}
 
-    if (income <= BASE_INCOME_1) {
-        tax = 0;
+void outputArray(const int* arr, int size) {
+    std::cout << "Array elements include: ";
+    for (int i = 0; i < size; ++i) {
+        std::cout << arr[i] << " ";
     }
-    else if (income <= BASE_INCOME_2) {
-        tax = (income - BASE_INCOME_1) * TAX_RATE_1;
-    }
-    else if (income <= BASE_INCOME_3) {
-        tax = (BASE_INCOME_2 - BASE_INCOME_1) * TAX_RATE_1 + (income - BASE_INCOME_2) * TAX_RATE_2;
-    }
-    else if (income <= BASE_INCOME_4) {
-        tax = (BASE_INCOME_2 - BASE_INCOME_1) * TAX_RATE_1 + (BASE_INCOME_3 - BASE_INCOME_2) * TAX_RATE_2 + (income - BASE_INCOME_3) * TAX_RATE_3;
-    }
-    else if (income <= BASE_INCOME_5) {
-        tax = (BASE_INCOME_2 - BASE_INCOME_1) * TAX_RATE_1 + (BASE_INCOME_3 - BASE_INCOME_2) * TAX_RATE_2 + (BASE_INCOME_4 - BASE_INCOME_3) * TAX_RATE_3 + (income - BASE_INCOME_4) * TAX_RATE_4;
-    }
-    else if (income <= BASE_INCOME_6) {
-        tax = (BASE_INCOME_2 - BASE_INCOME_1) * TAX_RATE_1 + (BASE_INCOME_3 - BASE_INCOME_2) * TAX_RATE_2 + (BASE_INCOME_4 - BASE_INCOME_3) * TAX_RATE_3 + (BASE_INCOME_5 - BASE_INCOME_4) * TAX_RATE_4 + (income - BASE_INCOME_5) * TAX_RATE_5;
-    }
-    else if (income <= BASE_INCOME_7) {
-        tax = (BASE_INCOME_2 - BASE_INCOME_1) * TAX_RATE_1 + (BASE_INCOME_3 - BASE_INCOME_2) * TAX_RATE_2 + (BASE_INCOME_4 - BASE_INCOME_3) * TAX_RATE_3 + (BASE_INCOME_5 - BASE_INCOME_4) * TAX_RATE_4 + (BASE_INCOME_6 - BASE_INCOME_5) * TAX_RATE_5 + (income - BASE_INCOME_6) * TAX_RATE_6;
-    }
-    else {
-        tax = (BASE_INCOME_2 - BASE_INCOME_1) * TAX_RATE_1 + (BASE_INCOME_3 - BASE_INCOME_2) * TAX_RATE_2 + (BASE_INCOME_4 - BASE_INCOME_3) * TAX_RATE_3 + (BASE_INCOME_5 - BASE_INCOME_4) * TAX_RATE_4 + (BASE_INCOME_6 - BASE_INCOME_5) * TAX_RATE_5 + (BASE_INCOME_7 - BASE_INCOME_6) * TAX_RATE_6 + (income - BASE_INCOME_7) * TAX_RATE_7;
-    }
+    std::cout << std::endl;
+}
 
-    return tax;
+int sumOfEvenElements(const int* arr, int size) {
+    int sum = 0;
+    for (int i = 0; i < size; ++i) {
+        if (arr[i] % 2 == 0) {
+            sum += arr[i];
+        }
+    }
+    return sum;
+}
+
+int productOfOddPositionedElements(const int* arr, int size) {
+    int product = 1;
+    for (int i = 0; i < size; i += 2) {
+        product *= arr[i];
+    }
+    return product;
 }
 
 int main() {
-    while (1)
-    {
-        unsigned long income;
+    int* myArray = nullptr;
+    int size;
 
-        std::cout << "Enter income in million VND: ";
-        std::cin >> income;
+    inputArray(myArray, size);
+    outputArray(myArray, size);
 
-        unsigned long tax = calculateTax(income);
+    int evenSum = sumOfEvenElements(myArray, size);
+    std::cout << "Sum of even elements: " << evenSum << std::endl;
 
-        std::cout << "Tax: " << tax << " million VND\n";
+    int oddPositionedProduct = productOfOddPositionedElements(myArray, size);
+    std::cout << "Product of odd-positioned elements: " << oddPositionedProduct << std::endl;
 
+    delete[] myArray;
 
-    }
     return 0;
 }
