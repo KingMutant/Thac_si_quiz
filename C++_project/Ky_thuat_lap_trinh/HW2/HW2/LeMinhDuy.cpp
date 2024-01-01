@@ -1,58 +1,75 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
-void inputArray(int*& arr, int& size) {
-    std::cout << "Enter the size of the array: ";
-    std::cin >> size;
+const int MAX_ROWS = 10;
+const int MAX_COLS = 10;
 
-    arr = new int[size];
-
-    std::cout << "Enter " << size << " integers for the array:" << std::endl;
-    for (int i = 0; i < size; ++i) {
-        std::cout << "Number " << i + 1 << ": ";
-        std::cin >> arr[i];
+bool isPrime(int number) {
+    if (number <= 1) {
+        return true;
     }
+    for (int i = 2; i * i <= number; ++i) {
+        if (number % i == 0) {
+            return false;
+        }
+    }
+    return true;
 }
 
-void outputArray(const int* arr, int size) {
-    std::cout << "Array elements include: ";
-    for (int i = 0; i < size; ++i) {
-        std::cout << arr[i] << " ";
-    }
-    std::cout << std::endl;
-}
-
-int sumOfEvenElements(const int* arr, int size) {
+int sumOfPrimesInMatrix(int matrix[MAX_ROWS][MAX_COLS], int numRows, int numCols) {
     int sum = 0;
-    for (int i = 0; i < size; ++i) {
-        if (arr[i] % 2 == 0) {
-            sum += arr[i];
+    for (int i = 0; i < numRows; ++i) {
+        for (int j = 0; j < numCols; ++j) {
+            if (isPrime(matrix[i][j])) {
+                sum += matrix[i][j];
+            }
         }
     }
     return sum;
 }
 
-int productOfOddPositionedElements(const int* arr, int size) {
-    int product = 1;
-    for (int i = 0; i < size; i += 2) {
-        product *= arr[i];
+void readMatrixFromFile(const std::string& filePath, int matrix[MAX_ROWS][MAX_COLS], int& numRows, int& numCols) {
+    std::ifstream file(filePath);
+
+    numRows = 0;
+    std::string line;
+    while (std::getline(file, line) && numRows < MAX_ROWS) {
+        std::istringstream iss(line);
+        numCols = 0;
+        int value;
+        while (iss >> value && numCols < MAX_COLS) {
+            matrix[numRows][numCols] = value;
+            ++numCols;
+        }
+        ++numRows;
     }
-    return product;
+
+    file.close();
+}
+
+void writeSumOfPrimesToFile(const std::string& filePath, int sum) {
+    std::ofstream output_file(filePath);
+    output_file << "Sum of prime numbers in the matrix: " << sum << std::endl;
+    output_file.close();
 }
 
 int main() {
-    int* myArray = nullptr;
-    int size;
+    int matrix[MAX_ROWS][MAX_COLS] = {};
+    int numRows, numCols;
 
-    inputArray(myArray, size);
-    outputArray(myArray, size);
+    std::string filePath = "test.txt";
+    readMatrixFromFile(filePath, matrix, numRows, numCols);
+    for (int i = 0; i < numRows; ++i) {
+        for (int j = 0; j < numCols; ++j) {
+            std::cout << matrix[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
 
-    int evenSum = sumOfEvenElements(myArray, size);
-    std::cout << "Sum of even elements: " << evenSum << std::endl;
+    int sumOfPrimes = sumOfPrimesInMatrix(matrix, numRows, numCols);
 
-    int oddPositionedProduct = productOfOddPositionedElements(myArray, size);
-    std::cout << "Product of odd-positioned elements: " << oddPositionedProduct << std::endl;
-
-    delete[] myArray;
+    writeSumOfPrimesToFile("output.txt", sumOfPrimes);
 
     return 0;
 }

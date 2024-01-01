@@ -1,0 +1,1 @@
+Sum of prime numbers in the matrix: 23
