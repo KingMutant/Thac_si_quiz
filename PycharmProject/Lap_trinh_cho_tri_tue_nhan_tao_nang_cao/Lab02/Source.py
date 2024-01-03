@@ -194,4 +194,7 @@ if __name__ == "__main__":
                     output_file.write('{}\n')
                     output_file.write('Yes.\n')
 
+        generate_output(new_2_atom_negation)
+        generate_output_append(new_3_atom_negation)
+
 
