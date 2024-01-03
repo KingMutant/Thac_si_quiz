@@ -18,5 +18,8 @@
     <ClCompile Include="LeMinhDuy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PHAN_SO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

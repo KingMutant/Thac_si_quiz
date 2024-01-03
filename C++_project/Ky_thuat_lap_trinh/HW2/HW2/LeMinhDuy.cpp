@@ -1,65 +1,75 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
-const unsigned long BASE_INCOME_1 = 4000000;
-const unsigned long BASE_INCOME_2 = 6000000;
-const unsigned long BASE_INCOME_3 = 9000000;
-const unsigned long BASE_INCOME_4 = 14000000;
-const unsigned long BASE_INCOME_5 = 24000000;
-const unsigned long BASE_INCOME_6 = 44000000;
-const unsigned long BASE_INCOME_7 = 84000000;
+const int MAX_ROWS = 10;
+const int MAX_COLS = 10;
 
-const double TAX_RATE_1 = 0.05;
-const double TAX_RATE_2 = 0.1;
-const double TAX_RATE_3 = 0.15;
-const double TAX_RATE_4 = 0.2;
-const double TAX_RATE_5 = 0.25;
-const double TAX_RATE_6 = 0.3;
-const double TAX_RATE_7 = 0.35;
+bool isPrime(int number) {
+    if (number <= 1) {
+        return true;
+    }
+    for (int i = 2; i * i <= number; ++i) {
+        if (number % i == 0) {
+            return false;
+        }
+    }
+    return true;
+}
 
-unsigned long calculateTax(unsigned long income) {
-    unsigned long tax = 0;
+int sumOfPrimesInMatrix(int matrix[MAX_ROWS][MAX_COLS], int numRows, int numCols) {
+    int sum = 0;
+    for (int i = 0; i < numRows; ++i) {
+        for (int j = 0; j < numCols; ++j) {
+            if (isPrime(matrix[i][j])) {
+                sum += matrix[i][j];
+            }
+        }
+    }
+    return sum;
+}
 
-    if (income <= BASE_INCOME_1) {
-        tax = 0;
-    }
-    else if (income <= BASE_INCOME_2) {
-        tax = (income - BASE_INCOME_1) * TAX_RATE_1;
-    }
-    else if (income <= BASE_INCOME_3) {
-        tax = (BASE_INCOME_2 - BASE_INCOME_1) * TAX_RATE_1 + (income - BASE_INCOME_2) * TAX_RATE_2;
-    }
-    else if (income <= BASE_INCOME_4) {
-        tax = (BASE_INCOME_2 - BASE_INCOME_1) * TAX_RATE_1 + (BASE_INCOME_3 - BASE_INCOME_2) * TAX_RATE_2 + (income - BASE_INCOME_3) * TAX_RATE_3;
-    }
-    else if (income <= BASE_INCOME_5) {
-        tax = (BASE_INCOME_2 - BASE_INCOME_1) * TAX_RATE_1 + (BASE_INCOME_3 - BASE_INCOME_2) * TAX_RATE_2 + (BASE_INCOME_4 - BASE_INCOME_3) * TAX_RATE_3 + (income - BASE_INCOME_4) * TAX_RATE_4;
-    }
-    else if (income <= BASE_INCOME_6) {
-        tax = (BASE_INCOME_2 - BASE_INCOME_1) * TAX_RATE_1 + (BASE_INCOME_3 - BASE_INCOME_2) * TAX_RATE_2 + (BASE_INCOME_4 - BASE_INCOME_3) * TAX_RATE_3 + (BASE_INCOME_5 - BASE_INCOME_4) * TAX_RATE_4 + (income - BASE_INCOME_5) * TAX_RATE_5;
-    }
-    else if (income <= BASE_INCOME_7) {
-        tax = (BASE_INCOME_2 - BASE_INCOME_1) * TAX_RATE_1 + (BASE_INCOME_3 - BASE_INCOME_2) * TAX_RATE_2 + (BASE_INCOME_4 - BASE_INCOME_3) * TAX_RATE_3 + (BASE_INCOME_5 - BASE_INCOME_4) * TAX_RATE_4 + (BASE_INCOME_6 - BASE_INCOME_5) * TAX_RATE_5 + (income - BASE_INCOME_6) * TAX_RATE_6;
-    }
-    else {
-        tax = (BASE_INCOME_2 - BASE_INCOME_1) * TAX_RATE_1 + (BASE_INCOME_3 - BASE_INCOME_2) * TAX_RATE_2 + (BASE_INCOME_4 - BASE_INCOME_3) * TAX_RATE_3 + (BASE_INCOME_5 - BASE_INCOME_4) * TAX_RATE_4 + (BASE_INCOME_6 - BASE_INCOME_5) * TAX_RATE_5 + (BASE_INCOME_7 - BASE_INCOME_6) * TAX_RATE_6 + (income - BASE_INCOME_7) * TAX_RATE_7;
+void readMatrixFromFile(const std::string& filePath, int matrix[MAX_ROWS][MAX_COLS], int& numRows, int& numCols) {
+    std::ifstream file(filePath);
+
+    numRows = 0;
+    std::string line;
+    while (std::getline(file, line) && numRows < MAX_ROWS) {
+        std::istringstream iss(line);
+        numCols = 0;
+        int value;
+        while (iss >> value && numCols < MAX_COLS) {
+            matrix[numRows][numCols] = value;
+            ++numCols;
+        }
+        ++numRows;
     }
 
-    return tax;
+    file.close();
+}
+
+void writeSumOfPrimesToFile(const std::string& filePath, int sum) {
+    std::ofstream output_file(filePath);
+    output_file << "Sum of prime numbers in the matrix: " << sum << std::endl;
+    output_file.close();
 }
 
 int main() {
-    while (1)
-    {
-        unsigned long income;
+    int matrix[MAX_ROWS][MAX_COLS] = {};
+    int numRows, numCols;
 
-        std::cout << "Enter income in million VND: ";
-        std::cin >> income;
-
-        unsigned long tax = calculateTax(income);
-
-        std::cout << "Tax: " << tax << " million VND\n";
-
-
+    std::string filePath = "test.txt";
+    readMatrixFromFile(filePath, matrix, numRows, numCols);
+    for (int i = 0; i < numRows; ++i) {
+        for (int j = 0; j < numCols; ++j) {
+            std::cout << matrix[i][j] << " ";
+        }
+        std::cout << std::endl;
     }
+
+    int sumOfPrimes = sumOfPrimesInMatrix(matrix, numRows, numCols);
+
+    writeSumOfPrimesToFile("output.txt", sumOfPrimes);
+
     return 0;
 }
