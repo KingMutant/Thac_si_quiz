@@ -134,8 +134,6 @@ if __name__ == "__main__":
         print("Clauses:", clauses)
         parsed_query = parse_query(query)
         print("Parsed Query:", parsed_query[0])
-        # parsed_clauses = process_clauses(sorted_clause)
-        # print("Sorted Parsed Clauses:", parsed_clauses)
         clause_1_atom = [item for item in sorted_clause if len(item) <= len('-B')]
         clause_2_atom = [item for item in sorted_clause if len('-B') < len(item) <= len('-B OR -C')]
         clause_3_atom = [item for item in sorted_clause if len('-B OR -C') < len(item) <= len('-A OR -B OR -C')]
@@ -146,7 +144,6 @@ if __name__ == "__main__":
         clause_2_atom = process_clauses(clause_2_atom)
         clause_3_atom = process_clauses(clause_3_atom)
         new_parsed_clauses = clause_2_atom + clause_3_atom + clause_1_atom
-        # new_parsed_clauses = process_clauses(new_parsed_clauses)
 
         for clause in new_parsed_clauses:
             response = kb_given.tell(clause)
@@ -178,20 +175,30 @@ if __name__ == "__main__":
             if value.cost == 1:
                 kb_negation_conclusion_1_atom.append(key)
 
-        generate_output(new_2_atom_negation)
-        generate_output_append(new_3_atom_negation)
+
+        response_result="Kb_result"
 
         for clause in kb_negation_conclusion_1_atom:
-            response_string = str(kb_given.tell(clause))
-            print('Response from KB', response_string)
-            if response_string == 'I already knew that.':
-                with open('output.txt', 'a') as output_file:
-                    output_file.write('0\n')
-                    output_file.write('No.\n')
+            response_result = str(kb_given.tell(clause))
+            print('Response from KB', response_result)
+            if response_result == 'I already knew that.':
+                kb_negation_conclusion_1_atom.remove(clause)
+            elif response_result == 'I don\'t buy that.':
+                break
 
-            elif response_string == 'I don\'t buy that.':
-                with open('output.txt', 'a') as output_file:
-                    output_file.write('{}\n')
-                    output_file.write('Yes.\n')
+        kb_entail_result = "Entail_result"
+        if response_result == "I already knew that.":
+            kb_entail_result = 'NO\n'
+            generate_output(new_2_atom_negation)
+            generate_output_append(new_3_atom_negation)
+            generate_output_append(kb_negation_conclusion_1_atom)
+            with open('output.txt', 'a') as output_file:
+                output_file.write(kb_entail_result)
 
-
+        elif response_result == "I don\'t buy that.":
+            kb_entail_result = 'YES\n'
+            new_3_atom_negation.append("{}")
+            generate_output(new_2_atom_negation)
+            generate_output_append(new_3_atom_negation)
+            with open('output.txt', 'a') as output_file:
+                output_file.write(kb_entail_result)

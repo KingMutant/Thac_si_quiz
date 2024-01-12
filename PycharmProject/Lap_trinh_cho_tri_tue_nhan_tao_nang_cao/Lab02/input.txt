@@ -1,7 +1,7 @@
-R
+-A
 4
-P OR Q
--Q OR R
--P OR S
--S
+-A OR B
+-C OR B
+A OR C OR -B
+-B
 
